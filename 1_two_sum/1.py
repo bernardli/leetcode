@@ -6,14 +6,13 @@ class Solution:
         record = {}
         numsLen = len(nums)
         for i in range(numsLen):
-            if nums[i] <= target:
-                if nums[i] in record:
-                    return [record[nums[i]], i]
-                else:
-                    record[target - nums[i]] = i
+            if nums[i] in record:
+                return [record[nums[i]], i]
+            else:
+                record[target - nums[i]] = i
 
     def run(self):
-        print(self.twoSum([2, 11, 15, 7], 9))
+        print(self.twoSum([2, 7, 11, 15], 0))
 
 
 # test
