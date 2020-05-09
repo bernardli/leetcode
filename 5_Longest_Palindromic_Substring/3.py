@@ -1,51 +1,50 @@
 '''
-这一版的思路是记录每个字符出现的位置, 然后找左右两个字符相同的字段中间部分是否形成回文结构
-但在重复字符的情况下(比如: aaaaaaaaaaa........)耗时很大, 没法通过
+没想到这个最开始想到但觉得会太慢应该通过不了的思路居然通过了
+仔细想想应该是因为不是每一个字符都满足左右展开进行判断的条件, 所以并不会每个字符都展开判断一遍
+所以用时没有想想的长
 '''
 
 class Solution:
     def longestPalindrome(self, s: str) -> str:
-        self.maxLen = 0
-        self.charRecord = {}
-        self.possibleStr = {}
-        for i, c in enumerate(s):
-            if c not in self.charRecord:
-                self.charRecord[c] = [i]
-            else:
-                self.charRecord[c].append(i)
-            self.countPossibleLen(i, c)
+        maxLen = 0
+        maxHead = 0
+        maxTail = 0
+        self.totalLen = len(s)
+
+        if self.totalLen == 0:
+            return ''
+        elif self.totalLen == 1:
+            return s
+
         
-        possibleLens = list(self.possibleStr.keys())
-        possibleLens.sort(reverse=True)
-
-        for length in possibleLens:
-            for head, tail in self.possibleStr[length]:
-                if self.isPalindromic(head, tail, s):
-                    return s[head:tail + 1]
-        return ''
-                
-
-    def countPossibleLen(self, i, c):
-        for index in self.charRecord[c]:
-            length = i - index + 1
-            if length not in self.possibleStr:
-                self.possibleStr[length] = [[index, i]]
-            else:
-                self.possibleStr[length].append([index, i])
-
-    def isPalindromic(self, head, tail, s):
-        while head <= tail:
-            if s[head] == s[tail]:
-                head += 1
-                tail -= 1
-                continue
-            else:
+        for i, c in enumerate(s):
+            if i + 1 == self.totalLen:
                 break
-        if head < tail:
-            return False
-        else:
-            return True
+            if c == s[i + 1]:
+                head, tail, length = self.isPalindromic(i, i + 1, s, 0)
+                if length > maxLen:
+                    maxLen = length
+                    maxHead = head
+                    maxTail = tail
 
+            if i - 1 >= 0 and s[i - 1] == s[i + 1]:
+                head, tail, length = self.isPalindromic(i - 1, i + 1, s, 1)
+                if length > maxLen:
+                    maxLen = length
+                    maxHead = head
+                    maxTail = tail
+
+        return s[maxHead: maxTail + 1]
+
+    def isPalindromic(self, left, right, s, length):
+        while s[left] == s[right]:
+            length += 2
+            if left - 1 >= 0 and right + 1 <= self.totalLen - 1:
+                left -= 1
+                right += 1
+            else:
+                return left, right, length
+        return left + 1, right - 1, length
 
     def run(self):
         print(self.longestPalindrome('babad'))
@@ -55,7 +54,6 @@ class Solution:
         print(self.longestPalindrome(''))
         print(self.longestPalindrome('abc'))
         print(self.longestPalindrome('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabcaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'))
-
 
 # test
 foo = Solution()
