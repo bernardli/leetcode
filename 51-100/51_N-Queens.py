@@ -9,59 +9,60 @@ class Solution:
         self.deepFirstSearch(0, [False for i in range(n)], [])
         return self.result
 
-    def deepFirstSearch(self, colIdx, row, placedIndexes):
-        if colIdx == self.n:
+    def deepFirstSearch(self, rowIdx, collumStatus, placedIndexes):
+        if rowIdx == self.n:
             solution = ['.' * self.n for i in range(self.n)]
             for index in placedIndexes:
-                colIdx, rowIdx = index
-                solution[colIdx] = solution[colIdx][:rowIdx] + 'Q' + solution[colIdx][rowIdx+1:]
+                rowIdx, colIdx = index
+                solution[rowIdx] = solution[rowIdx][:colIdx] + 'Q' + solution[rowIdx][colIdx+1:]
             self.result.append(solution)
             return
+        
 
-        for rowIdx in range(self.n):
-            if row[rowIdx] == True:
+        for colIdx in range(self.n):
+            if collumStatus[colIdx] == True:
                 continue
-            if self.isNotConflicted(colIdx, rowIdx):
-                self.chessboard[colIdx][rowIdx] = True
-                row[rowIdx] = True
-                placedIndexes.append((colIdx, rowIdx))
-                self.deepFirstSearch(colIdx + 1, row, placedIndexes)
-                self.chessboard[colIdx][rowIdx] = False
-                row[rowIdx] = False
+            if self.isNotConflicted(rowIdx, colIdx):
+                self.chessboard[rowIdx][colIdx] = True
+                collumStatus[colIdx] = True
+                placedIndexes.append((rowIdx, colIdx))
+                self.deepFirstSearch(rowIdx + 1, collumStatus, placedIndexes)
+                self.chessboard[rowIdx][colIdx] = False
+                collumStatus[colIdx] = False
                 placedIndexes.pop()
 
     def isNotConflicted(self, queenColIdx, queenRowIdx):
-        colIdx = queenColIdx - 1
-        rowIdx = queenRowIdx - 1
-        while colIdx >= 0 and rowIdx >= 0:
-            if self.chessboard[colIdx][rowIdx] == True:
+        rowIdx = queenColIdx - 1
+        colIdx = queenRowIdx - 1
+        while rowIdx >= 0 and colIdx >= 0:
+            if self.chessboard[rowIdx][colIdx] == True:
                 return False
-            colIdx -= 1
             rowIdx -= 1
-
-        colIdx = queenColIdx + 1
-        rowIdx = queenRowIdx + 1
-        while colIdx < self.n and rowIdx < self.n:
-            if self.chessboard[colIdx][rowIdx] == True:
-                return False
-            colIdx += 1
-            rowIdx += 1
-
-        colIdx = queenColIdx - 1
-        rowIdx = queenRowIdx + 1
-        while colIdx >= 0 and rowIdx < self.n:
-            if self.chessboard[colIdx][rowIdx] == True:
-                return False
             colIdx -= 1
-            rowIdx += 1
 
-        colIdx = queenColIdx + 1
-        rowIdx = queenRowIdx - 1
-        while colIdx < self.n and rowIdx >= 0:
-            if self.chessboard[colIdx][rowIdx] == True:
+        rowIdx = queenColIdx + 1
+        colIdx = queenRowIdx + 1
+        while rowIdx < self.n and colIdx < self.n:
+            if self.chessboard[rowIdx][colIdx] == True:
                 return False
+            rowIdx += 1
             colIdx += 1
+
+        rowIdx = queenColIdx - 1
+        colIdx = queenRowIdx + 1
+        while rowIdx >= 0 and colIdx < self.n:
+            if self.chessboard[rowIdx][colIdx] == True:
+                return False
             rowIdx -= 1
+            colIdx += 1
+
+        rowIdx = queenColIdx + 1
+        colIdx = queenRowIdx - 1
+        while rowIdx < self.n and colIdx >= 0:
+            if self.chessboard[rowIdx][colIdx] == True:
+                return False
+            rowIdx += 1
+            colIdx -= 1
         return True
 
     def run(self):
