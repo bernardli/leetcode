@@ -1,7 +1,7 @@
 from typing import List
 
 '''
-a bad implement
+a bad implementation 
 '''
 
 class Solution:
